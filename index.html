@@ -270,11 +270,6 @@
       <div class="recv">還是小小寶寶，最需要熟悉的聲音 ⤵</div>
       <span class="eyebrow">0〜6個月</span>
       <h2>從巧虎的聲音，開始陪伴。</h2>
-      <img class="why-img" src="images/stage1-comic.jpg" alt="巧虎手偶互動教學：慢慢左右移動與躲貓貓">
-      <p class="group-title">這樣玩（大人套在手上）</p>
-      <div class="play-row"><span class="play-pill">追視</span><span class="rt">在臉前約20公分，慢慢左右移動。</span></div>
-      <div class="play-row"><span class="play-pill">聲音</span><span class="rt"><span class="says">早安</span><span class="says">喝奶囉</span></span></div>
-      <div class="play-row"><span class="play-pill">躲貓貓</span><span class="rt">遮起來，再出現。</span></div>
       <p class="group-title">寶寶的反應</p>
       <div class="chips"><span class="chip blue">眼睛跟著動</span><span class="chip blue">安靜下來</span><span class="chip blue">給你一個笑</span></div>
       <div class="role-box" data-age="s1"></div>
@@ -400,10 +395,10 @@
 
   const roleData={
     s1:{
-      '媽媽':{say:'抱著餵奶、換尿布時，讓巧虎輕聲說「媽媽在這裡喔」。',tip:'寶寶最熟悉媽媽的聲音，輕輕說就好。'},
-      '爸爸':{say:'用巧虎在寶寶眼前慢慢移動，邊說「爸爸來囉～」。',tip:'不用太多話，動作和聲音就夠了。'},
-      '阿公':{say:'讓巧虎慢慢出現，跟寶寶說「阿公來看你囉」。',tip:'簡單一句、慢慢說，寶寶就會看著你。'},
-      '阿嬤':{say:'讓巧虎哼一小段歌，輕輕搖一搖。',tip:'溫柔的聲音，是最好的安撫。'}
+      '媽媽':{line:'早安～今天也好可愛喔', img:'images/play-0-6-mom.jpg'},
+      '爸爸':{line:'哇～你看到巧虎了嗎？', img:'images/play-0-6-dad.jpg'},
+      '阿公':{line:'阿公來陪你玩囉～', img:'images/play-0-6-grandpa.jpg'},
+      '阿嬤':{line:'好好玩喔～對不對？', img:'images/play-0-6-grandma.jpg'}
     },
     s2:{
       '媽媽':{say:'跟巧虎一起玩躲貓貓，等寶寶笑了再出現。',tip:'寶寶笑了，就多玩幾次。'},
@@ -425,15 +420,33 @@
     }
   };
 
+  // 0〜6個月は遊び方とコツを共通にし、セリフと画像だけ役割で変える
+  const S1_COMMON={play:'把巧虎放在寶寶臉前慢慢移動，輕聲打招呼。', tip:'不用太多話，聲音和表情就夠了。'};
+  const S1_IMG_READY={'媽媽':true,'爸爸':true,'阿公':true,'阿嬤':true};  // 画像が用意できた役割だけ true にする
+
   let curStage=null, curRole=null;
 
   function renderRoles(){
     if(!curRole) return;
     document.querySelectorAll('.role-box').forEach(box=>{
-      const d=roleData[box.dataset.age][curRole];
-      box.innerHTML='<div class="role-head">'+curRole+'可以這樣陪</div>'+
-                    '<div class="role-say">'+d.say+'</div>'+
-                    '<div class="role-tip">'+d.tip+'</div>';
+      const age=box.dataset.age;
+      const head='<div class="role-head">'+curRole+'可以這樣陪</div>';
+      if(age==='s1'){
+        const r=roleData.s1[curRole];
+        const imgHtml = S1_IMG_READY[curRole]
+          ? '<img src="'+r.img+'" alt="0〜6個月・'+curRole+'用巧虎陪寶寶" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;margin:4px 0 10px;display:block">'
+          : '<div class="ph r43" style="margin:4px 0 10px">0〜6個月・'+curRole+'版<small>示意圖（待替換）</small></div>';
+        box.innerHTML=head+
+          '<div style="margin-bottom:8px"><span class="says">'+r.line+'</span></div>'+
+          imgHtml+
+          '<div class="role-say">'+S1_COMMON.play+'</div>'+
+          '<div class="role-tip">'+S1_COMMON.tip+'</div>';
+      }else{
+        const d=roleData[age][curRole];
+        box.innerHTML=head+
+          '<div class="role-say">'+d.say+'</div>'+
+          '<div class="role-tip">'+d.tip+'</div>';
+      }
     });
   }
   function update(scroll){
